@@ -268,8 +268,8 @@
             
             /* Идеально зажимаем текст между блоками */
             .center-info { 
-                margin-top: 34vh; /* Сдвигаем вниз ровно под аватарку */
-                max-width: 44vw; /* Чтобы не наезжало на боковые блоки */
+                margin-top: 34vh; 
+                max-width: 44vw; 
                 gap: 0.4rem; 
             }
 
@@ -357,19 +357,22 @@
             setInterval(createParticle, 400); 
         });
 
-        // --- ОСТАНОВКА МУЗЫКИ ПРИ СВОРАЧИВАНИИ БРАУЗЕРА ---
+        // --- УМНАЯ ОСТАНОВКА МУЗЫКИ (ДЛЯ ПК И ТЕЛЕФОНОВ) ---
+        // Браузер ставит трек на паузу, сохраняя текущую секунду.
+        // При возврате он продолжает с того же места.
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
-                // Если свернули или закрыли вкладку
+                // Если вкладку скрыли, свернули браузер или заблокировали телефон
                 bgMusic.pause();
             } else {
-                // Если вернулись на вкладку и стартовый экран уже пропущен
+                // Если вернулись на вкладку и стартовый экран уже пройден
                 if (splash.style.display === 'none') {
                     bgMusic.play().catch(e => console.log("Ошибка звука:", e));
                 }
             }
         });
 
+        // --- ЛОГИКА ПАДАЮЩИХ КАРТИНОК ---
         const container = document.getElementById('particles-container');
         const particleImages = ['1.png', '2.png']; 
 
