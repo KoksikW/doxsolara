@@ -119,7 +119,7 @@
         }
 
         /* ==========================================================================
-           --- БАЗОВЫЕ СТИЛИ (ДЛЯ ПК) ---
+           --- БАЗОВЫЕ СТИЛИ (С МАСШТАБИРОВАНИЕМ ПОД РАЗРЕШЕНИЕ ЭКРАНА) ---
            ========================================================================== */
         
         .square-photo {
@@ -134,8 +134,16 @@
             z-index: 1;
         }
 
-        .top-photo { width: 460px; height: 360px; }
-        .bottom-photo { width: 560px; height: 360px; }
+        /* Возвращаем адаптивные размеры (clamp), подстраивающиеся под монитор */
+        .top-photo { 
+            width: clamp(150px, 24vw, 460px); 
+            height: clamp(110px, 18.7vw, 360px); 
+        }
+        
+        .bottom-photo { 
+            width: clamp(180px, 29vw, 560px); 
+            height: clamp(110px, 18.7vw, 360px); 
+        }
 
         .square-photo:hover {
             border-color: rgba(255,105,180,0.8);
@@ -152,8 +160,9 @@
             width: 100%; height: 100%; object-fit: cover; display: block;
         }
 
-        .photo-1 { top: 5%; left: calc(5% + 50px); }
-        .photo-2 { top: 5%; right: calc(5% + 50px); }
+        /* Адаптивное позиционирование */
+        .photo-1 { top: 5%; left: calc(5% + clamp(10px, 2.5vw, 50px)); }
+        .photo-2 { top: 5%; right: calc(5% + clamp(10px, 2.5vw, 50px)); }
         .photo-3 { bottom: 5%; left: 5%; }
         .photo-4 { bottom: 5%; right: 5%; }
 
@@ -162,8 +171,9 @@
             top: 5%;
             left: 50%;
             transform: translateX(-50%);
-            width: 250px;
-            height: 250px;
+            /* Аватарка тоже масштабируется */
+            width: clamp(100px, 13vw, 250px);
+            height: clamp(100px, 13vw, 250px);
             z-index: 1;
             transition: transform 0.3s ease;
         }
@@ -208,39 +218,45 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
+            gap: clamp(0.8rem, 1.5vw, 1.5rem);
             width: 100%;
-            max-width: 450px;
-            margin-top: 240px;
+            /* Отступы и ширина колонки масштабируются */
+            max-width: clamp(280px, 35vw, 450px);
+            margin-top: clamp(140px, 20vw, 240px);
         }
 
         .contact-line {
             display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-            width: 100%; background: rgba(5, 5, 5, 0.6); padding: 1.2rem;
+            width: 100%; background: rgba(5, 5, 5, 0.6); 
+            padding: clamp(0.8rem, 1.2vw, 1.2rem);
             border: 1px solid rgba(255,105,180,0.4); border-left: 4px solid rgba(255,105,180,0.6);
             color: #cccccc; text-align: center;
             box-shadow: 0 0 15px rgba(255,105,180,0.2), 0 0 30px rgba(255,105,180,0.1);
         }
 
         .tg-nick {
-            color: #ff69b4; font-weight: bold; font-size: 1.2rem;
+            color: #ff69b4; font-weight: bold; 
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
             text-shadow: 0 0 15px rgba(255,105,180,0.8), 0 0 30px rgba(255,105,180,0.4);
         }
 
         .phone-number {
-            color: #bbbbbb; font-family: monospace; font-size: 1.1rem;
+            color: #bbbbbb; font-family: monospace; 
+            font-size: clamp(0.8rem, 1.3vw, 1.1rem);
             text-shadow: 0 0 10px rgba(255,105,180,0.3);
         }
 
         .bio-block {
             width: 100%; background: rgba(5, 5, 5, 0.6);
-            border: 1px solid rgba(255,105,180,0.4); padding: 1.5rem; text-align: center;
+            border: 1px solid rgba(255,105,180,0.4); 
+            padding: clamp(1rem, 1.5vw, 1.5rem); text-align: center;
             display: flex; flex-direction: column; gap: 0.8rem;
             box-shadow: 0 0 15px rgba(255,105,180,0.2), 0 0 30px rgba(255,105,180,0.1);
         }
 
         .bio-text {
-            font-size: 0.95rem; line-height: 1.8; color: #c8c8c8; text-align: center;
+            font-size: clamp(0.7rem, 1vw, 0.95rem); 
+            line-height: 1.8; color: #c8c8c8; text-align: center;
             font-family: 'Courier New', monospace; word-break: break-word;
             text-shadow: 0 0 5px rgba(255,105,180,0.2);
         }
@@ -248,7 +264,6 @@
         /* ==========================================================================
            --- МОБИЛЬНАЯ ВЕРСИЯ (СТРОГО ДЛЯ ТЕЛЕФОНОВ) ---
            ========================================================================== */
-        /* Жесткое условие: ширина до 950px И высота до 600px, чтобы не ломать ПК и планшеты */
         @media screen and (max-width: 950px) and (max-height: 600px) and (orientation: landscape) {
             
             .top-photo { width: 26vw; height: 42vh; }
@@ -269,7 +284,7 @@
                 position: absolute;
                 top: 0;
                 margin-top: 42vh; 
-                max-width: 38vw; /* Четко по центру, чтобы не лезло на боковые картинки */
+                max-width: 38vw; 
                 gap: 0.4rem; 
             }
 
@@ -347,13 +362,11 @@
         const bgMusic = document.getElementById('bgMusic');
         bgMusic.volume = 0.5;
 
-        // Надежная функция запуска музыки с обходом мобильных блокировок
         const playMusic = () => {
             let playPromise = bgMusic.play();
             if (playPromise !== undefined) {
                 playPromise.catch(e => {
                     console.log("Браузер требует касания для звука.");
-                    // Ждем касания экрана пользователем для разблокировки звука
                     const resumeAudio = () => {
                         bgMusic.play();
                         document.removeEventListener('touchstart', resumeAudio);
@@ -373,8 +386,7 @@
             setInterval(createParticle, 400); 
         });
 
-        // --- ЛОГИКА ОСТАНОВКИ/ЗАПУСКА ПРИ СВОРАЧИВАНИИ ---
-        // 1. Используем событие изменения видимости страницы
+        // Умная остановка музыки при сворачивании 
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 bgMusic.pause();
@@ -385,7 +397,6 @@
             }
         });
 
-        // 2. Используем фокус/расфокус как страховку для старых телефонов
         window.addEventListener('blur', function() {
             bgMusic.pause();
         });
@@ -396,7 +407,6 @@
             }
         });
 
-        // --- ЛОГИКА ПАДАЮЩИХ КАРТИНОК ---
         const container = document.getElementById('particles-container');
         const particleImages = ['1.png', '2.png']; 
 
