@@ -239,13 +239,13 @@
             font-size: clamp(0.65rem, 1.1vw, 0.95rem);
             line-height: 1.8;
             color: #c8c8c8;
-            text-align: left;
+            text-align: center; /* ИЗМЕНЕНО: теперь текст по центру */
             font-family: 'Courier New', monospace;
             word-break: break-word;
             text-shadow: 0 0 5px rgba(255,105,180,0.2);
         }
 
-        /* --- АДАПТИВНОСТЬ ДЛЯ МЕНЬШИХ ЭКРАНОВ (оставил на всякий случай для совсем мобилок) --- */
+        /* --- АДАПТИВНОСТЬ ДЛЯ МЕНЬШИХ ЭКРАНОВ --- */
         @media (max-width: 600px) {
             .photo-1 { top: 3%; left: calc(3% + 5px); }
             .photo-2 { top: 3%; right: calc(3% + 5px); }
