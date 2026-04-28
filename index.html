@@ -25,7 +25,7 @@
             box-shadow: inset 0 0 60px rgba(0,0,0,0.95);
         }
 
-        /* --- ЗАГЛУШКА ПЕРЕВОРОТА ЭКРАНА (НОВОЕ) --- */
+        /* --- ЗАГЛУШКА ПЕРЕВОРОТА ЭКРАНА (ЖЕСТКАЯ) --- */
         #rotate-device {
             position: fixed;
             top: 0;
@@ -34,7 +34,7 @@
             height: 100%;
             background-color: #050505;
             z-index: 100000;
-            display: none; /* Скрыто по умолчанию */
+            display: none; 
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -63,21 +63,14 @@
             100% { transform: rotate(-90deg); }
         }
 
-        /* Включаем заглушку, если экран телефона вертикальный */
-        @media screen and (orientation: portrait) and (max-width: 900px) {
-            #rotate-device {
-                display: flex;
-            }
-            body {
-                overflow: hidden;
-            }
-            /* Полностью скрываем остальной сайт, пока телефон не перевернут */
-            #splash-screen, .center-column, .square-photo, #particles-container {
-                display: none !important;
-            }
+        /* Если экран вертикальный - жестко включаем заглушку и прячем остальное */
+        @media screen and (orientation: portrait) {
+            #rotate-device { display: flex !important; }
+            body { overflow: hidden; }
+            #splash-screen, .center-column, .square-photo, #particles-container { display: none !important; }
         }
 
-        /* --- ЭКРАН ВХОДА (SPLASH SCREEN) --- */
+        /* --- ЭКРАН ВХОДА --- */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -108,7 +101,7 @@
             100% { opacity: 0.4; }
         }
 
-        /* --- КОНТЕЙНЕР ДЛЯ ПАДАЮЩИХ КАРТИНОК --- */
+        /* --- ПАДАЮЩИЕ КАРТИНКИ --- */
         #particles-container {
             position: fixed;
             top: 0;
@@ -132,7 +125,7 @@
             to { transform: translateY(110vh) rotate(360deg); }
         }
 
-        /* --- УГЛОВЫЕ БЛОКИ --- */
+        /* --- УГЛОВЫЕ БЛОКИ (АДАПТИВНЫЕ ПО ВЫСОТЕ ЭКРАНА - vh) --- */
         .square-photo {
             position: absolute;
             border: 3px solid rgba(255,105,180,0.4);
@@ -140,8 +133,7 @@
             background: transparent;
             box-shadow: 0 0 15px rgba(255,105,180,0.3),
                         0 0 30px rgba(255,105,180,0.1);
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        border-color 0.3s ease, filter 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s ease, filter 0.3s ease;
             filter: grayscale(0.5) contrast(1.2);
             z-index: 1;
             transform: translateZ(0);
@@ -149,14 +141,15 @@
             will-change: transform, filter, border-color;
         }
 
+        /* Теперь масштабируются от VH (высоты), чтобы не вылезать за края на телефонах */
         .top-photo {
-            width: clamp(100px, 24vw, 460px);
-            height: clamp(78px, 18.7vw, 360px);
+            width: clamp(100px, 45vh, 460px);
+            height: clamp(60px, 28vh, 360px);
         }
 
         .bottom-photo {
-            width: clamp(122px, 29.1vw, 560px);
-            height: clamp(78px, 18.7vw, 360px);
+            width: clamp(120px, 55vh, 560px);
+            height: clamp(60px, 28vh, 360px);
         }
 
         .square-photo:hover {
@@ -177,33 +170,35 @@
             display: block;
         }
 
-        .photo-1 { top: 5%; left: calc(5% + clamp(10px, 2.55vw, 50px)); }
-        .photo-2 { top: 5%; right: calc(5% + clamp(10px, 2.55vw, 50px)); }
-        .photo-3 { bottom: 5%; left: 5%; }
-        .photo-4 { bottom: 5%; right: 5%; }
+        /* Привязка строго по краям экрана */
+        .photo-1 { top: 3vh; left: calc(2vw + clamp(5px, 3vh, 50px)); }
+        .photo-2 { top: 3vh; right: calc(2vw + clamp(5px, 3vh, 50px)); }
+        .photo-3 { bottom: 3vh; left: 2vw; }
+        .photo-4 { bottom: 3vh; right: 2vw; }
 
         /* --- ЦЕНТРАЛЬНАЯ КОЛОНКА --- */
         .center-column {
             position: absolute;
-            top: 4vh;
+            top: 0;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: clamp(240px, 40vw, 450px);
+            justify-content: center; /* Центрирует всё по вертикали */
+            width: clamp(240px, 50vh, 450px);
+            height: 100vh; /* Берет всю высоту экрана */
             z-index: 5;
-            height: 92vh;
         }
 
+        /* Обертка для аватара */
         .main-photo-wrapper {
-            width: clamp(100px, 22vh, 250px);
-            height: clamp(100px, 22vh, 250px);
+            width: clamp(80px, 25vh, 250px);
+            height: clamp(80px, 25vh, 250px);
             position: relative;
             z-index: 1;
             transition: transform 0.3s ease;
             flex-shrink: 0;
-            margin-bottom: 3vh;
         }
 
         .main-photo-wrapper:hover {
@@ -211,6 +206,7 @@
             z-index: 10;
         }
 
+        /* Сам круглый аватар */
         .main-photo {
             width: 100%;
             height: 100%;
@@ -249,18 +245,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
+            gap: clamp(0.5rem, 1.5vh, 1.5rem);
             width: 100%;
+            margin-top: clamp(1rem, 3vh, 2rem);
         }
 
         .contact-line {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.2rem;
             width: 100%;
             background: rgba(5, 5, 5, 0.6);
-            padding: clamp(0.6rem, 1.2vw, 1.2rem);
+            padding: clamp(0.5rem, 1.2vh, 1.2rem);
             border: 1px solid rgba(255,105,180,0.4);
             border-left: 4px solid rgba(255,105,180,0.6);
             color: #cccccc;
@@ -269,10 +266,11 @@
                         0 0 30px rgba(255,105,180,0.1);
         }
 
+        /* Шрифты тоже отталкиваются от VH */
         .tg-nick {
             color: #ff69b4;
             font-weight: bold;
-            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+            font-size: clamp(0.8rem, 2vh, 1.2rem);
             text-shadow: 0 0 15px rgba(255,105,180,0.8),
                          0 0 30px rgba(255,105,180,0.4);
         }
@@ -280,7 +278,7 @@
         .phone-number {
             color: #bbbbbb;
             font-family: monospace;
-            font-size: clamp(0.7rem, 1.3vw, 1.1rem);
+            font-size: clamp(0.7rem, 1.8vh, 1.1rem);
             text-shadow: 0 0 10px rgba(255,105,180,0.3);
         }
 
@@ -288,18 +286,18 @@
             width: 100%;
             background: rgba(5, 5, 5, 0.6);
             border: 1px solid rgba(255,105,180,0.4);
-            padding: clamp(0.8rem, 1.5vw, 1.5rem);
+            padding: clamp(0.6rem, 1.5vh, 1.5rem);
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.5rem;
             box-shadow: 0 0 15px rgba(255,105,180,0.2),
                         0 0 30px rgba(255,105,180,0.1);
         }
 
         .bio-text {
-            font-size: clamp(0.65rem, 1.1vw, 0.95rem);
-            line-height: 1.8;
+            font-size: clamp(0.6rem, 1.5vh, 0.95rem);
+            line-height: 1.6;
             color: #c8c8c8;
             text-align: center;
             font-family: 'Courier New', monospace;
@@ -374,7 +372,6 @@
             splash.style.opacity = '0';
             setTimeout(() => { splash.style.display = 'none'; }, 500);
             
-            // Начинаем создавать картинки только после входа
             setInterval(createParticle, 400); 
         });
 
@@ -389,7 +386,7 @@
             particle.src = `img/particles/${randomImg}`;
             particle.classList.add('particle');
             
-            // Адаптивный размер снежинок
+            // Размер снежинок
             const size = Math.random() * (120 - 30) + 30; 
             particle.style.width = `${size}px`;
             
