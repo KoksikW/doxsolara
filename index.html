@@ -25,6 +25,58 @@
             box-shadow: inset 0 0 60px rgba(0,0,0,0.95);
         }
 
+        /* --- ЗАГЛУШКА ПЕРЕВОРОТА ЭКРАНА (НОВОЕ) --- */
+        #rotate-device {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            z-index: 100000;
+            display: none; /* Скрыто по умолчанию */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #ff69b4;
+        }
+
+        .rotate-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: phoneRotate 2s infinite ease-in-out;
+            text-shadow: 0 0 20px rgba(255,105,180,0.8);
+        }
+
+        .rotate-text {
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255,105,180,0.8);
+            line-height: 1.8;
+        }
+
+        @keyframes phoneRotate {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(-90deg); }
+        }
+
+        /* Включаем заглушку, если экран телефона вертикальный */
+        @media screen and (orientation: portrait) and (max-width: 900px) {
+            #rotate-device {
+                display: flex;
+            }
+            body {
+                overflow: hidden;
+            }
+            /* Полностью скрываем остальной сайт, пока телефон не перевернут */
+            #splash-screen, .center-column, .square-photo, #particles-container {
+                display: none !important;
+            }
+        }
+
         /* --- ЭКРАН ВХОДА (SPLASH SCREEN) --- */
         #splash-screen {
             position: fixed;
@@ -69,7 +121,7 @@
 
         .particle {
             position: absolute;
-            top: -100px;
+            top: -150px;
             opacity: 0.6;
             pointer-events: none;
             user-select: none;
@@ -88,12 +140,15 @@
             background: transparent;
             box-shadow: 0 0 15px rgba(255,105,180,0.3),
                         0 0 30px rgba(255,105,180,0.1);
-            transition: all 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        border-color 0.3s ease, filter 0.3s ease;
             filter: grayscale(0.5) contrast(1.2);
             z-index: 1;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            will-change: transform, filter, border-color;
         }
 
-        /* Адаптивные размеры блоков с ограничением максимальной ширины оригинала */
         .top-photo {
             width: clamp(100px, 24vw, 460px);
             height: clamp(78px, 18.7vw, 360px);
@@ -110,7 +165,7 @@
                         0 0 60px rgba(255,105,180,0.3),
                         0 0 100px rgba(255,105,180,0.15);
             filter: grayscale(0) contrast(1.3);
-            transform: scale(1.08);
+            transform: scale(1.08) translateZ(0);
             z-index: 10;
         }
 
@@ -122,26 +177,37 @@
             display: block;
         }
 
-        /* ПОЗИЦИОНИРОВАНИЕ (с пропорциональным отступом для центровки) */
         .photo-1 { top: 5%; left: calc(5% + clamp(10px, 2.55vw, 50px)); }
         .photo-2 { top: 5%; right: calc(5% + clamp(10px, 2.55vw, 50px)); }
         .photo-3 { bottom: 5%; left: 5%; }
         .photo-4 { bottom: 5%; right: 5%; }
 
-        /* --- ЦЕНТРАЛЬНЫЙ КРУГ (С ВРАЩЕНИЕМ) --- */
-        .main-photo-wrapper {
+        /* --- ЦЕНТРАЛЬНАЯ КОЛОНКА --- */
+        .center-column {
             position: absolute;
-            top: 5%;
+            top: 4vh;
             left: 50%;
             transform: translateX(-50%);
-            width: clamp(80px, 13vw, 250px);
-            height: clamp(80px, 13vw, 250px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: clamp(240px, 40vw, 450px);
+            z-index: 5;
+            height: 92vh;
+        }
+
+        .main-photo-wrapper {
+            width: clamp(100px, 22vh, 250px);
+            height: clamp(100px, 22vh, 250px);
+            position: relative;
             z-index: 1;
             transition: transform 0.3s ease;
+            flex-shrink: 0;
+            margin-bottom: 3vh;
         }
 
         .main-photo-wrapper:hover {
-            transform: translateX(-50%) scale(1.08);
+            transform: scale(1.08);
             z-index: 10;
         }
 
@@ -178,17 +244,13 @@
             object-fit: cover;
         }
 
-        /* --- ИНФОРМАЦИЯ В ЦЕНТРЕ --- */
+        /* --- ИНФО-БЛОК --- */
         .center-info {
-            position: relative;
-            z-index: 5;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: clamp(0.5rem, 1.5vw, 1.5rem);
+            gap: 1.5rem;
             width: 100%;
-            max-width: clamp(220px, 35vw, 450px);
-            margin-top: clamp(100px, 18vw, 240px);
         }
 
         .contact-line {
@@ -239,24 +301,19 @@
             font-size: clamp(0.65rem, 1.1vw, 0.95rem);
             line-height: 1.8;
             color: #c8c8c8;
-            text-align: center; /* ИЗМЕНЕНО: теперь текст по центру */
+            text-align: center;
             font-family: 'Courier New', monospace;
             word-break: break-word;
             text-shadow: 0 0 5px rgba(255,105,180,0.2);
         }
-
-        /* --- АДАПТИВНОСТЬ ДЛЯ МЕНЬШИХ ЭКРАНОВ --- */
-        @media (max-width: 600px) {
-            .photo-1 { top: 3%; left: calc(3% + 5px); }
-            .photo-2 { top: 3%; right: calc(3% + 5px); }
-            .photo-3 { bottom: 3%; left: 3%; }
-            .photo-4 { bottom: 3%; right: 3%; }
-            .main-photo-wrapper { top: 3%; }
-            .center-info { gap: 1rem; margin-top: 150px; }
-        }
     </style>
 </head>
 <body>
+
+    <div id="rotate-device">
+        <div class="rotate-icon">↻</div>
+        <div class="rotate-text">Поверните<br>телефон<br><span style="font-size: 0.6rem; color: #b0b0b0;">для отображения сайта</span></div>
+    </div>
 
     <div id="splash-screen">
         <div id="splash-text">нажми</div>
@@ -280,26 +337,28 @@
         <img src="img/photo4.jpg" alt="photo 4">
     </div>
 
-    <div class="main-photo-wrapper">
-        <div class="main-photo">
-            <img src="img/photo5.jpg" alt="main avatar">
-        </div>
-    </div>
-
-    <div class="center-info">
-        <div class="contact-line">
-            <span class="tg-nick">TG : @SinMiage</span>
-            <span class="phone-number">id : 6460444410</span>
+    <div class="center-column">
+        <div class="main-photo-wrapper">
+            <div class="main-photo">
+                <img src="img/photo5.jpg" alt="main avatar">
+            </div>
         </div>
 
-        <div class="bio-block">
-            <div class="bio-text">
-                статус: <span style="color:#ff69b4; text-shadow: 0 0 10px rgba(255,105,180,0.6);">Табуретка заебал</span><br>
-                создания дата: 28.04.2026<br>
-                ----------------------<br>
-                «Ибо истинно говорю вам: Кащенко Пятый не ведает прощения для алчущих чад Тиктока.<br>
-                Волею моею непреклонною повелеваю тебе: покайся во грехах своих предо мною,<br>
-                Великим, доколе не постигла тебя кара неизбежная»
+        <div class="center-info">
+            <div class="contact-line">
+                <span class="tg-nick">TG : @SinMiage</span>
+                <span class="phone-number">id : 6460444410</span>
+            </div>
+
+            <div class="bio-block">
+                <div class="bio-text">
+                    статус: <span style="color:#ff69b4; text-shadow: 0 0 10px rgba(255,105,180,0.6);">Табуретка заебал</span><br>
+                    создания дата: 28.04.2026<br>
+                    ----------------------<br>
+                    «Ибо истинно говорю вам: Кащенко Пятый не ведает прощения для алчущих чад Тиктока.<br>
+                    Волею моею непреклонною повелеваю тебе: покайся во грехах своих предо мною,<br>
+                    Великим, доколе не постигла тебя кара неизбежная»
+                </div>
             </div>
         </div>
     </div>
@@ -315,6 +374,7 @@
             splash.style.opacity = '0';
             setTimeout(() => { splash.style.display = 'none'; }, 500);
             
+            // Начинаем создавать картинки только после входа
             setInterval(createParticle, 400); 
         });
 
@@ -327,9 +387,9 @@
             
             const randomImg = particleImages[Math.floor(Math.random() * particleImages.length)];
             particle.src = `img/particles/${randomImg}`;
-            
             particle.classList.add('particle');
             
+            // Адаптивный размер снежинок
             const size = Math.random() * (120 - 30) + 30; 
             particle.style.width = `${size}px`;
             
